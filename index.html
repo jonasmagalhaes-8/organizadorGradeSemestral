@@ -6,10 +6,14 @@
   <title>Organizador de Grade Semestral</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
-
     .table td {
       min-height: 80px;
       border: 1px solid #ccc;
+    }
+
+    .disciplines {
+      display: flex;
+      align-items: center;
     }
 
     .droppable:hover {
@@ -18,193 +22,58 @@
     }
 
     .hover:hover {
-        cursor: pointer;
+      cursor: pointer;
     }
 
     .scrollable-list {
-    max-height: 500px;
-    overflow-y: auto;
+      max-height: 546px;
+      overflow-y: auto;
+    }
+
+    .input-line {
+      display: inline-block;
+      border: none;
+      border-bottom: 1px solid black;
     }
 
     @media (max-width: 768px) {
-        body {
+      body {
         zoom: 58%;
       }
-      .col-md-3,
-      .col-md-9 {
-        width: 100%;
+      .col-md-4,
+      .col-md-8 {
+        width: 90%;
         margin-top: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-9">
-        <h4>Grade Semestral</h4>
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Horários</th>
-                <th>Seg</th>
-                <th>Ter</th>
-                <th>Qua</th>
-                <th>Qui</th>
-                <th>Sex</th>
-                <th>Sab</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>13:15 - 14:05</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>14:05 - 14:55</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>15:10 - 16:00</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>16:00 - 16:50</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>16:50 - 17:40</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>17:40 - 18:30</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>18:40 - 19:30</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>19:30 - 20:20</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>20:20 - 21:10</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-              <tr>
-                <td>21:10 - 22:00</td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-                <td class="droppable"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+  <div class="row">
+    <div class="col-md-8">
+      <h4>Grade Semestral:</h4>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Horários</th>
+              <th>Seg</th>
+              <th>Ter</th>
+              <th>Qua</th>
+              <th>Qui</th>
+              <th>Sex</th>
+              <th>Sab</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </div>
-      <div class="col-md-3">
-        <h4>Disciplinas</h4>
-        <div class="scrollable-list">
-          <ul class="list-group" id="listGroup">
-            <li class="list-group-item hover" draggable="true">Álgebra Linear</li>
-            <li class="list-group-item hover" draggable="true">Álgebra Vet. e Geometria Analítica</li>
-            <li class="list-group-item hover" draggable="true">Análise e Projeto de Algoritmos</li>
-            <li class="list-group-item hover" draggable="true">Arquitetura de Computadores</li>
-            <li class="list-group-item hover" draggable="true">Banco de Dados I</li>
-            <li class="list-group-item hover" draggable="true">Banco de Dados II</li>
-            <li class="list-group-item hover" draggable="true">Cálculo I</li>
-            <li class="list-group-item hover" draggable="true">Cálculo II</li>
-            <li class="list-group-item hover" draggable="true">Ciência, Tecnologia e Sociedade</li>
-            <li class="list-group-item hover" draggable="true">Circuitos Digitais</li>
-            <li class="list-group-item hover" draggable="true">Compiladores</li>
-            <li class="list-group-item hover" draggable="true">Direito Aplicado a Informática</li>
-            <li class="list-group-item hover" draggable="true">Empreendedorismo</li>
-            <li class="list-group-item hover" draggable="true">Engenharia de Software</li>
-            <li class="list-group-item hover" draggable="true">Estágio</li>
-            <li class="list-group-item hover" draggable="true">Estruturas de Dados</li>
-            <li class="list-group-item hover" draggable="true">Filosofia da Educação</li>
-            <li class="list-group-item hover" draggable="true">Gestão de Projetos</li>
-            <li class="list-group-item hover" draggable="true">Grafos</li>
-            <li class="list-group-item hover" draggable="true">História da Educação</li>
-            <li class="list-group-item hover" draggable="true">Informática na Educação</li>
-            <li class="list-group-item hover" draggable="true">Inglês Técnico I</li>
-            <li class="list-group-item hover" draggable="true">Interface Humano Computador</li>
-            <li class="list-group-item hover" draggable="true">Inteligência Artificial</li>
-            <li class="list-group-item hover" draggable="true">Introdução à Computação</li>
-            <li class="list-group-item hover" draggable="true">Introdução à Matemática</li>
-            <li class="list-group-item hover" draggable="true">Laboratório de Programação I</li>
-            <li class="list-group-item hover" draggable="true">Laboratório de Programação II</li>
-            <li class="list-group-item hover" draggable="true">Laboratório de Programação III</li>
-            <li class="list-group-item hover" draggable="true">Leitura e Produção Textual</li>
-            <li class="list-group-item hover" draggable="true">Linguagens Formais e Autômatos</li>
-            <li class="list-group-item hover" draggable="true">Lógica e Linguagem de Programação</li>
-            <li class="list-group-item hover" draggable="true">Metodologia da Pesquisa</li>
-            <li class="list-group-item hover" draggable="true">Optativa I</li>
-            <li class="list-group-item hover" draggable="true">Optativa II</li>
-            <li class="list-group-item hover" draggable="true">Organização de Arquivos e Dados</li>
-            <li class="list-group-item hover" draggable="true">Probabilidade e Estatística</li>
-            <li class="list-group-item hover" draggable="true">Programação Orientada a Objeto</li>
-            <li class="list-group-item hover" draggable="true">Projeto Integrador I</li>
-            <li class="list-group-item hover" draggable="true">Projeto Integrador II</li>
-            <li class="list-group-item hover" draggable="true">Redes</li>
-            <li class="list-group-item hover" draggable="true">Segurança da Informação</li>
-            <li class="list-group-item hover" draggable="true">Sistemas Distribuídos</li>
-            <li class="list-group-item hover" draggable="true">Sistemas Operacionais</li>
-            <li class="list-group-item hover" draggable="true">TCC</li>
-            <li class="list-group-item hover" draggable="true">Teoria de Computação</li>
-            <li class="list-group-item hover" draggable="true">Tópicos Avançados em Programação</li>
-            <li class="list-group-item hover" draggable="true">Web Design</li>
-          </ul>
-        </div>
+    </div>
+    <div class="col-md-4">
+      <h4>Disciplinas:</h4>
+      <div class="scrollable-list">
+        <ul class="list-group" id="listGroup"></ul>
       </div>
     </div>
   </div>
@@ -213,18 +82,170 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
+    // Discipline names array
+    const disciplineNames = [
+      "Álgebra Linear",
+      "Álgebra Vet. e Geometria Analítica",
+      "Análise e Projeto de Algoritmos",
+      "Arquitetura de Computadores",
+      "Banco de Dados I",
+      "Banco de Dados II",
+      "Cálculo I",
+      "Cálculo II",
+      "Ciência, Tecnologia e Sociedade",
+      "Circuitos Digitais",
+      "Compiladores",
+      "Direito Aplicado a Informática",
+      "Empreendedorismo",
+      "Engenharia de Software",
+      "Estágio",
+      "Estruturas de Dados",
+      "Filosofia da Educação",
+      "Gestão de Projetos",
+      "Grafos",
+      "História da Educação",
+      "Informática na Educação",
+      "Inglês",
+      "Inteligência Artificial",
+      "Interface Humano Computador",
+      "Introdução à Computação",
+      "Introdução à Matemática",
+      "Laboratório de Programação I",
+      "Laboratório de Programação II",
+      "Leitura e Produção Textual",
+      "Linguagens Formais e Autômatos",
+      "Lógica e Linguagem de Programação",
+      "Metodologia da Pesquisa",
+      "Optativa I",
+      "Optativa II",
+      "Organização de Arquivos e Dados",
+      "Probabilidade e Estatística",
+      "Programação Orientada a Objeto",
+      "Projeto Integrador I",
+      "Projeto Integrador II",
+      "Redes de Computadores",
+      "Segurança da Informação",
+      "Sistemas Distribuidos",
+      "Sistemas Operacionais",
+      "TCC",
+      "Teoria da Computação",
+      "Tópicos Avançados em Programação",
+      "Web Design",
+    ];
+
+    // Generate list items for each discipline
+    const listGroup = document.getElementById("listGroup");
+    disciplineNames.forEach((discipline) => {
+      const listItemContainer = document.createElement("div");
+      listItemContainer.classList.add("disciplines");
+
+      const listItem = document.createElement("li");
+      listItem.classList.add("list-group-item", "hover");
+      listItem.textContent = discipline;
+      listItem.draggable = true;
+
+      const inputElement = document.createElement("input");
+      inputElement.type = "text";
+      inputElement.classList.add("input-line");
+      inputElement.style.width = "95px";
+      inputElement.style.marginLeft = "5px";
+      inputElement.placeholder = "Horário Aula";
+      inputElement.onblur = salvarDadosInputInicioAula;
+
+      listItemContainer.appendChild(listItem);
+      listItemContainer.appendChild(inputElement);
+      listGroup.appendChild(listItemContainer);
+    });
+
+    // Time slots array
+    const time = [
+      "13:15 - 14:05",
+      "14:05 - 14:55",
+      "15:10 - 16:00",
+      "16:00 - 16:50",
+      "16:50 - 17:40",
+      "17:40 - 18:30",
+      "18:40 - 19:30",
+      "19:30 - 20:20",
+      "20:20 - 21:10",
+      "21:10 - 22:00",
+    ];
+
+    // Generate time slots and table cells
+    const tbody = document.querySelector("tbody");
+    time.forEach((timeSlot) => {
+      const row = document.createElement("tr");
+      const timeCell = document.createElement("td");
+      timeCell.textContent = timeSlot;
+      row.appendChild(timeCell);
+
+      for (let i = 0; i < 6; i++) {
+        const cell = document.createElement("td");
+        cell.classList.add("droppable");
+        row.appendChild(cell);
+      }
+
+      tbody.appendChild(row);
+    });
+
+    // Chame a função carregarDadosTabela() quando a página for carregada
+    document.addEventListener('DOMContentLoaded', carregarDadosTabela);
+
+    // Chame a função carregarDadosInput() quando a página for carregada
+    document.addEventListener('DOMContentLoaded', carregarDadosInput);
+
+    function salvarDadosTabela() {
+      const table = document.querySelector('.table');
+      const tableData = table.innerHTML;
+      localStorage.setItem('tabelaDados', tableData);
+    }
+
+    // Função para permitir a ação de soltar na célula
+    function allowDrop(event) {
+      event.preventDefault();
+    }
+
+    function salvarDadosInputInicioAula() {
+      const inputs = document.querySelectorAll('.input-line');
+      inputs.forEach((input) => {
+        const id = input.parentNode.querySelector('.list-group-item').innerHTML;
+        const horarioInicio = input.value;
+        localStorage.setItem(id, horarioInicio);
+      });
+    }
+
+    // Função para carregar os dados dos inputs do localStorage
+    function carregarDadosInput() {
+      const inputs = document.querySelectorAll('.input-line');
+      inputs.forEach((input) => {
+        const id = input.parentNode.querySelector('.list-group-item').innerHTML;
+        const horarioInicio = localStorage.getItem(id);
+        if (horarioInicio) {
+          input.value = horarioInicio;
+        }
+        input.addEventListener('input', salvarDadosInputInicioAula);
+      });
+    }
+
+    // Função para carregar os dados da tabela do localStorage
+    function carregarDadosTabela() {
+      const table = document.querySelector('.table');
+      const tableData = localStorage.getItem('tabelaDados');
+      if (tableData) {
+        table.innerHTML = tableData;
+      }
+      const cells = document.querySelectorAll('.droppable');
+      cells.forEach(cell => {
+        cell.addEventListener('dragover', allowDrop);
+        cell.addEventListener('drop', handleDrop);
+        cell.addEventListener('click', handleRemove);
+      });
+    }
+  
     // Function to handle drag and drop events
     function handleDragStart(e) {
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/plain', e.target.innerHTML);
-    }
-
-    function handleDragOver(e) {
-      if (e.preventDefault) {
-        e.preventDefault();
-      }
-      e.dataTransfer.dropEffect = 'move';
-      return false;
     }
 
     function handleDrop(e) {
@@ -234,18 +255,19 @@
       const data = e.dataTransfer.getData('text/plain');
       e.target.innerHTML = data;
       e.target.classList.remove('dropped');
+      salvarDadosTabela();
       return false;
     }
 
     function handleRemove(e) {
       e.target.innerHTML = '';
       e.target.classList.add('dropped');
+      salvarDadosTabela();
     }
 
     // Add event listeners for drag and drop
     const droppables = document.getElementsByClassName('droppable');
     Array.from(droppables).forEach((droppable) => {
-      droppable.addEventListener('dragover', handleDragOver);
       droppable.addEventListener('drop', handleDrop);
       droppable.addEventListener('click', handleRemove);
     });
@@ -254,6 +276,7 @@
     Array.from(listItems).forEach((item) => {
       item.addEventListener('dragstart', handleDragStart);
     });
+
   </script>
 </body>
 </html>
