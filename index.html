@@ -26,14 +26,13 @@
     }
 
     .scrollable-list {
-      max-height: 546px;
+      max-height: 250px;
       overflow-y: auto;
     }
 
     .input-line {
       display: inline-block;
       border: none;
-      border-bottom: 1px solid black;
     }
 
     @media (max-width: 768px) {
@@ -51,7 +50,6 @@
 <body>
   <div class="row">
     <div class="col-md-8">
-      <h4>Grade Semestral:</h4>
       <div class="table-responsive">
         <table class="table">
           <thead>
@@ -147,9 +145,9 @@
       const inputElement = document.createElement("input");
       inputElement.type = "text";
       inputElement.classList.add("input-line");
-      inputElement.style.width = "95px";
+      inputElement.style.width = "100%";
       inputElement.style.marginLeft = "5px";
-      inputElement.placeholder = "Horário Aula";
+      inputElement.placeholder = "Anotar dias e horários da aula";
       inputElement.onblur = salvarDadosInputInicioAula;
 
       listItemContainer.appendChild(listItem);
@@ -221,7 +219,7 @@
         const id = input.parentNode.querySelector('.list-group-item').innerHTML;
         const horarioInicio = localStorage.getItem(id);
         if (horarioInicio) {
-          input.value = horarioInicio;
+          input.placeholder = horarioInicio;
         }
         input.addEventListener('input', salvarDadosInputInicioAula);
       });
