@@ -219,7 +219,7 @@
         const id = input.parentNode.querySelector('.list-group-item').innerHTML;
         const horarioInicio = localStorage.getItem(id);
         if (horarioInicio) {
-          input.placeholder = horarioInicio;
+          input.value = horarioInicio;
         }
         input.addEventListener('input', salvarDadosInputInicioAula);
       });
