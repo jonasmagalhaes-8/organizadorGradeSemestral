@@ -350,10 +350,10 @@
       const inputElement = document.createElement("input");
       inputElement.type = "text";
       inputElement.classList.add("input-line");
-      inputElement.style.width = "100%";
-      inputElement.style.marginLeft = "5px";
       inputElement.placeholder = "Anotar dias e horários da aula";
-      inputElement.onblur = salvarDadosInputInicioAula;
+
+      // Removido o onblur para usar addEventListener posteriormente
+      // inputElement.onblur = salvarDadosInputInicioAula;
 
       listItemContainer.appendChild(listItem);
       listItemContainer.appendChild(inputElement);
@@ -397,62 +397,55 @@
       tbody.appendChild(row);
     });
 
-    // Chame a função carregarDadosTabela() quando a página for carregada
-    document.addEventListener('DOMContentLoaded', carregarDadosTabela);
-
-    // Chame a função carregarDadosInput() quando a página for carregada
-    document.addEventListener('DOMContentLoaded', carregarDadosInput);
-
-    function salvarDadosTabela() {
-      const table = document.querySelector('.table');
-      const tableData = table.innerHTML;
-      var tabelaDados = {};
-      try {
-        tabelaDados = JSON.parse(tableData);
-      } catch (e) {
-        tabelaDados = tableData;
-      }
-    }
-
     // Função para permitir a ação de soltar na célula
     function allowDrop(event) {
       event.preventDefault();
     }
 
+    // --- FUNÇÕES CORRIGIDAS ---
+
+    function salvarDadosTabela() {
+      const table = document.querySelector('.table tbody'); // Salva apenas o corpo da tabela
+      const tableData = table.innerHTML;
+      localStorage.setItem('tabelaDados_v2', tableData);
+    }
+
     function salvarDadosInputInicioAula() {
       const inputs = document.querySelectorAll('.input-line');
+      const dadosInputs = {};
       inputs.forEach((input) => {
-        const id = input.parentNode.querySelector('.list-group-item').innerHTML;
-        const horarioInicio = input.value;
-        var dados = {};
-        try {
-          dados = JSON.parse(horarioInicio);
-        } catch (e) {
-          dados = horarioInicio;
-        }
+        const id = input.parentNode.querySelector('.list-group-item').textContent; // Usa textContent
+        dadosInputs[id] = input.value;
       });
+      localStorage.setItem('dadosInputs_v2', JSON.stringify(dadosInputs));
     }
 
-    // Função para carregar os dados dos inputs
     function carregarDadosInput() {
+      const dadosSalvos = localStorage.getItem('dadosInputs_v2');
+      if (dadosSalvos) {
+        const dadosInputs = JSON.parse(dadosSalvos);
+        const inputs = document.querySelectorAll('.input-line');
+        inputs.forEach((input) => {
+          const id = input.parentNode.querySelector('.list-group-item').textContent;
+          if (dadosInputs[id]) {
+            input.value = dadosInputs[id];
+          }
+        });
+      }
+      // Adiciona o listener DEPOIS de carregar, para não salvar em branco na inicialização
       const inputs = document.querySelectorAll('.input-line');
-      inputs.forEach((input) => {
-        const id = input.parentNode.querySelector('.list-group-item').innerHTML;
-        var horarioInicio = null;
-        if (horarioInicio) {
-          input.value = horarioInicio;
-        }
-        input.addEventListener('input', salvarDadosInputInicioAula);
+      inputs.forEach(input => {
+        input.addEventListener('blur', salvarDadosInputInicioAula);
       });
     }
 
-    // Função para carregar os dados da tabela
     function carregarDadosTabela() {
-      const table = document.querySelector('.table');
-      var tableData = null;
+      const tableBody = document.querySelector('.table tbody');
+      const tableData = localStorage.getItem('tabelaDados_v2');
       if (tableData) {
-        table.innerHTML = tableData;
+        tableBody.innerHTML = tableData;
       }
+      // Reatribui os eventos para as células carregadas
       const cells = document.querySelectorAll('.droppable');
       cells.forEach(cell => {
         cell.addEventListener('dragover', allowDrop);
@@ -461,10 +454,12 @@
       });
     }
 
+    // --- FIM DAS FUNÇÕES CORRIGIDAS ---
+
     // Function to handle drag and drop events
     function handleDragStart(e) {
       e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', e.target.innerHTML);
+      e.dataTransfer.setData('text/plain', e.target.textContent); // Usa textContent
     }
 
     function handleDrop(e) {
@@ -472,29 +467,39 @@
         e.stopPropagation();
       }
       const data = e.dataTransfer.getData('text/plain');
-      e.target.innerHTML = data;
+      e.target.innerHTML = data; // Mantem innerHTML para poder limpar depois
       e.target.classList.remove('dropped');
       salvarDadosTabela();
       return false;
     }
 
     function handleRemove(e) {
-      e.target.innerHTML = '';
-      e.target.classList.add('dropped');
-      salvarDadosTabela();
+      if (e.target.classList.contains('droppable') && e.target.innerHTML !== '') {
+        e.target.innerHTML = '';
+        e.target.classList.add('dropped');
+        salvarDadosTabela();
+      }
     }
 
-    // Add event listeners for drag and drop
-    const droppables = document.getElementsByClassName('droppable');
-    Array.from(droppables).forEach((droppable) => {
-      droppable.addEventListener('drop', handleDrop);
-      droppable.addEventListener('click', handleRemove);
+    // Roda as funções de carregamento quando o DOM estiver pronto
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarDadosTabela();
+      carregarDadosInput();
+
+      // Add event listeners for drag and drop
+      const droppables = document.querySelectorAll('.droppable');
+      droppables.forEach((droppable) => {
+        droppable.addEventListener('dragover', allowDrop);
+        droppable.addEventListener('drop', handleDrop);
+        droppable.addEventListener('click', handleRemove);
+      });
+
+      const listItems = document.querySelectorAll('.list-group-item');
+      listItems.forEach((item) => {
+        item.addEventListener('dragstart', handleDragStart);
+      });
     });
 
-    const listItems = document.getElementsByClassName('list-group-item');
-    Array.from(listItems).forEach((item) => {
-      item.addEventListener('dragstart', handleDragStart);
-    });
 
     // Search functionality
     const searchInput = document.getElementById('searchInput');
