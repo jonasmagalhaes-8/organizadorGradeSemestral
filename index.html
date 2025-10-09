@@ -1,24 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Organizador de Grade Semestral</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
+      min-height: 100vh;
+      padding: 5px;
+    }
+
+    .container-fluid {
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .table-card {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 0;
+    }
+
+    .disciplines-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      padding: 15px;
+      margin-top: 11.5px;
+      margin-bottom: 10px;
+    }
+
+    .table {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .disciplines-card h4 {
+      color: #1e6b3e;
+      font-weight: 700;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .search-container {
+      display: inline-block;
+      width: calc(100% - 150px);
+      vertical-align: middle;
+    }
+
+    .search-input {
+      width: 100%;
+      border: 2px solid #e8ecf5;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      margin-bottom: 5px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #1e6b3e;
+      box-shadow: 0 0 0 3px rgba(30, 107, 62, 0.1);
+    }
+
+    .search-input::placeholder {
+      color: #a0aec0;
+    }
+
+    .table {
+      margin-bottom: 0;
+    }
+
+    .table thead th {
+      background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
+      color: white;
+      border: none;
+      padding: 15px 10px;
+      font-weight: 600;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .table thead th:first-child {
+      border-top-left-radius: 10px;
+    }
+
+    .table thead th:last-child {
+      border-top-right-radius: 10px;
+    }
+
     .table td {
-      min-height: 80px;
-      border: 1px solid #ccc;
+      min-height: 60px;
+      border: 2px solid #e8ecf5;
+      padding: 8px;
+      vertical-align: middle;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .table td:first-child {
+      background: #f8f9fd;
+      font-weight: 600;
+      color: #1e6b3e;
+      font-size: 0.85rem;
     }
 
     .disciplines {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 5px;
+    }
+
+
+    .list-group-item {
+      border: 2px solid #e8ecf5;
+      border-radius: 10px;
+      padding: 12px 15px;
+      font-weight: 500;
+      color: #2d3748;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #f8f9fd 0%, #ffffff 100%);
+    }
+
+    .list-group-item:hover {
+      transform: translateX(5px);
+      border-color: #1e6b3e;
+      box-shadow: 0 4px 12px rgba(30, 107, 62, 0.2);
+      cursor: grab;
+    }
+
+    .list-group-item:active {
+      cursor: grabbing;
+    }
+
+    .droppable {
+      position: relative;
+      border-radius: 8px;
     }
 
     .droppable:hover {
-      background-color: red;
+      background: linear-gradient(135deg, #fef3e2 0%, #ffe8cc 100%);
       cursor: pointer;
+      transform: scale(1.02);
+      border-color: #ffa500;
+    }
+
+    .droppable:not(:empty) {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+      border-color: #1e6b3e;
+      font-weight: 600;
+      color: #155724;
+      box-shadow: 0 2px 8px rgba(30, 107, 62, 0.2);
     }
 
     .hover:hover {
@@ -26,19 +177,62 @@
     }
 
     .scrollable-list {
-      max-height: 250px;
+      max-height: 700px;
       overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .scrollable-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .scrollable-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .scrollable-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
+      border-radius: 10px;
     }
 
     .input-line {
-      display: inline-block;
-      border: none;
+      width: 100%;
+      border: 2px solid #e8ecf5;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+
+    .input-line:focus {
+      outline: none;
+      border-color: #1e6b3e;
+      box-shadow: 0 0 0 3px rgba(30, 107, 62, 0.1);
+    }
+
+    .input-line::placeholder {
+      color: #a0aec0;
+    }
+
+    .badge-info {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
     }
 
     @media (max-width: 768px) {
       body {
         zoom: 58%;
       }
+
       .col-md-4,
       .col-md-8 {
         width: 90%;
@@ -47,31 +241,41 @@
     }
   </style>
 </head>
+
 <body>
-  <div class="row">
-    <div class="col-md-8">
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Horários</th>
-              <th>Seg</th>
-              <th>Ter</th>
-              <th>Qua</th>
-              <th>Qui</th>
-              <th>Sex</th>
-              <th>Sab</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-9">
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Horários</th>
+                  <th>Seg</th>
+                  <th>Ter</th>
+                  <th>Qua</th>
+                  <th>Qui</th>
+                  <th>Sex</th>
+                  <th>Sab</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="col-md-4">
-      <h4>Disciplinas:</h4>
-      <div class="scrollable-list">
-        <ul class="list-group" id="listGroup"></ul>
+      <div class="col-md-3">
+        <div class="disciplines-card">
+          <h4>📖 Disciplinas</h4>
+          <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar">
+          </div>
+          <div class="scrollable-list">
+            <ul class="list-group" id="listGroup"></ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -110,7 +314,7 @@
       "Introdução à Matemática",
       "Laboratório de Programação I",
       "Laboratório de Programação II",
-       "Laboratório de Programação III",
+      "Laboratório de Programação III",
       "Leitura e Produção Textual",
       "Linguagens Formais e Autômatos",
       "Lógica e Linguagem de Programação",
@@ -158,6 +362,12 @@
 
     // Time slots array
     const time = [
+      "07:00 - 07:50",
+      "07:50 - 08:40",
+      "08:55 - 09:45",
+      "09:45 - 10:35",
+      "10:35 - 11:25",
+      "11:25 - 12:15",
       "13:15 - 14:05",
       "14:05 - 14:55",
       "15:10 - 16:00",
@@ -196,7 +406,12 @@
     function salvarDadosTabela() {
       const table = document.querySelector('.table');
       const tableData = table.innerHTML;
-      localStorage.setItem('tabelaDados', tableData);
+      var tabelaDados = {};
+      try {
+        tabelaDados = JSON.parse(tableData);
+      } catch (e) {
+        tabelaDados = tableData;
+      }
     }
 
     // Função para permitir a ação de soltar na célula
@@ -209,16 +424,21 @@
       inputs.forEach((input) => {
         const id = input.parentNode.querySelector('.list-group-item').innerHTML;
         const horarioInicio = input.value;
-        localStorage.setItem(id, horarioInicio);
+        var dados = {};
+        try {
+          dados = JSON.parse(horarioInicio);
+        } catch (e) {
+          dados = horarioInicio;
+        }
       });
     }
 
-    // Função para carregar os dados dos inputs do localStorage
+    // Função para carregar os dados dos inputs
     function carregarDadosInput() {
       const inputs = document.querySelectorAll('.input-line');
       inputs.forEach((input) => {
         const id = input.parentNode.querySelector('.list-group-item').innerHTML;
-        const horarioInicio = localStorage.getItem(id);
+        var horarioInicio = null;
         if (horarioInicio) {
           input.value = horarioInicio;
         }
@@ -226,10 +446,10 @@
       });
     }
 
-    // Função para carregar os dados da tabela do localStorage
+    // Função para carregar os dados da tabela
     function carregarDadosTabela() {
       const table = document.querySelector('.table');
-      const tableData = localStorage.getItem('tabelaDados');
+      var tableData = null;
       if (tableData) {
         table.innerHTML = tableData;
       }
@@ -240,7 +460,7 @@
         cell.addEventListener('click', handleRemove);
       });
     }
-  
+
     // Function to handle drag and drop events
     function handleDragStart(e) {
       e.dataTransfer.effectAllowed = 'move';
@@ -276,6 +496,23 @@
       item.addEventListener('dragstart', handleDragStart);
     });
 
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function () {
+      const searchTerm = this.value.toLowerCase();
+      const disciplineContainers = document.querySelectorAll('.disciplines');
+
+      disciplineContainers.forEach((container) => {
+        const disciplineName = container.querySelector('.list-group-item').textContent.toLowerCase();
+        if (disciplineName.includes(searchTerm)) {
+          container.style.display = 'flex';
+        } else {
+          container.style.display = 'none';
+        }
+      });
+    });
+
   </script>
 </body>
+
 </html>
