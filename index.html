@@ -1,539 +1,987 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Organizador de Grade Semestral</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      font-family: 'Inter', sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de Grade Semestral</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
 
-    body {
-      background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
-      min-height: 100vh;
-      padding: 5px;
-    }
+        body {
+            background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
+            min-height: 100vh;
+            padding: 5px;
+            overflow-x: hidden;
+        }
 
-    .container-fluid {
-      max-width: 100%;
-      margin: 0;
-      padding: 0;
-    }
+        /* --- NAVEGAÇÃO SUPERIOR E INDICADORES --- */
+        .top-nav {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            position: sticky;
+            top: 5px;
+            z-index: 1000;
+        }
 
-    .table-card {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 0;
-    }
+        .nav-tabs-custom {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
 
-    .disciplines-card {
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-      padding: 15px;
-      margin-top: 11.5px;
-      margin-bottom: 10px;
-    }
+        .nav-btn {
+            background: #f8f9fd;
+            border: 2px solid #e8ecf5;
+            padding: 8px 20px;
+            border-radius: 8px;
+            color: #1e6b3e;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
 
-    .table {
-      background: white;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    }
+        .nav-btn.active {
+            background: #1e6b3e;
+            border-color: #1e6b3e;
+            color: white;
+        }
 
-    .disciplines-card h4 {
-      color: #1e6b3e;
-      font-weight: 700;
-      margin-bottom: 15px;
-      font-size: 1.3rem;
-      display: inline-block;
-      margin-right: 10px;
-    }
+        .switch-wrapper {
+            display: inline-block;
+            background: #f8f9fd;
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid #e8ecf5;
+            font-size: 0.9rem;
+            color: #1e6b3e;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
 
-    .search-container {
-      display: inline-block;
-      width: calc(100% - 150px);
-      vertical-align: middle;
-    }
+        .global-stats-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background: #f8f9fd;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #e8ecf5;
+            max-width: 400px;
+            margin: 0 auto;
+        }
 
-    .search-input {
-      width: 100%;
-      border: 2px solid #e8ecf5;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
-      margin-bottom: 5px;
-    }
+        /* --- GERENCIADOR DE VISUALIZAÇÃO --- */
+        .view-section {
+            display: none;
+        }
 
-    .search-input:focus {
-      outline: none;
-      border-color: #1e6b3e;
-      box-shadow: 0 0 0 3px rgba(30, 107, 62, 0.1);
-    }
+        .view-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
 
-    .search-input::placeholder {
-      color: #a0aec0;
-    }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
 
-    .table {
-      margin-bottom: 0;
-    }
+            to {
+                opacity: 1;
+            }
+        }
 
-    .table thead th {
-      background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
-      color: white;
-      border: none;
-      padding: 15px 10px;
-      font-weight: 600;
-      text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+        /* --- TELA 1: GRADE (Progresso Curricular) --- */
+        .grid-wrapper {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
 
-    .table thead th:first-child {
-      border-top-left-radius: 10px;
-    }
+        .sem-row {
+            padding: 25px 0;
+            border-bottom: 2px dashed #e8ecf5;
+            position: relative;
+        }
 
-    .table thead th:last-child {
-      border-top-right-radius: 10px;
-    }
+        .sem-row:last-child {
+            border-bottom: none;
+        }
 
-    .table td {
-      min-height: 60px;
-      border: 2px solid #e8ecf5;
-      padding: 8px;
-      vertical-align: middle;
-      text-align: center;
-      transition: all 0.3s ease;
-      background: white;
-    }
+        .sem-title {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-weight: 800;
+            color: #e2e8f0;
+            font-size: 1.8rem;
+            letter-spacing: -1px;
+            z-index: 0;
+        }
 
-    .table td:first-child {
-      background: #f8f9fd;
-      font-weight: 600;
-      color: #1e6b3e;
-      font-size: 0.85rem;
-    }
+        .sem-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+            position: relative;
+            z-index: 2;
+        }
 
-    .disciplines {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 12px;
-      gap: 5px;
-    }
+        .subject-card {
+            border-radius: 10px;
+            min-height: 80px;
+            padding: 15px 5px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
 
+        .subject-card:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
 
-    .list-group-item {
-      border: 2px solid #e8ecf5;
-      border-radius: 10px;
-      padding: 12px 15px;
-      font-weight: 500;
-      color: #2d3748;
-      transition: all 0.3s ease;
-      background: linear-gradient(135deg, #f8f9fd 0%, #ffffff 100%);
-    }
+        /* NOVAS CORES DOS CARDS */
+        .subject-card.completed {
+            background: #28a745;
+            color: white;
+            border: 2px solid #1e7e34;
+        }
 
-    .list-group-item:hover {
-      transform: translateX(5px);
-      border-color: #1e6b3e;
-      box-shadow: 0 4px 12px rgba(30, 107, 62, 0.2);
-      cursor: grab;
-    }
+        .subject-card.available {
+            background: #ffffff;
+            color: #2d3748;
+            border: 2px solid #cbd5e1;
+        }
 
-    .list-group-item:active {
-      cursor: grabbing;
-    }
+        .subject-card.locked {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeeba;
+            cursor: not-allowed;
+        }
 
-    .droppable {
-      position: relative;
-      border-radius: 8px;
-    }
+        .card-badges {
+            position: absolute;
+            top: -12px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
 
-    .droppable:hover {
-      background: linear-gradient(135deg, #fef3e2 0%, #ffe8cc 100%);
-      cursor: pointer;
-      transform: scale(1.02);
-      border-color: #ffa500;
-    }
+        .badge-sem {
+            background: #0d5028;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-    .droppable:not(:empty) {
-      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-      border-color: #1e6b3e;
-      font-weight: 600;
-      color: #155724;
-      box-shadow: 0 2px 8px rgba(30, 107, 62, 0.2);
-    }
+        .badge-reqs {
+            background: #ffa500;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: help;
+            border: 1px solid #e69500;
+        }
 
-    .hover:hover {
-      cursor: pointer;
-    }
+        /* --- TELA 2: ORGANIZADOR DE HORÁRIOS --- */
+        .container-fluid {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
 
-    .scrollable-list {
-      max-height: 700px;
-      overflow-y: auto;
-      padding-right: 10px;
-    }
+        .table-card {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 0;
+        }
 
-    .scrollable-list::-webkit-scrollbar {
-      width: 8px;
-    }
+        .disciplines-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            margin-bottom: 10px;
+        }
 
-    .scrollable-list::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 10px;
-    }
+        .table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            margin-bottom: 0;
+        }
 
-    .scrollable-list::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
-      border-radius: 10px;
-    }
+        .table thead th {
+            background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
+            color: white;
+            border: none;
+            padding: 15px 10px;
+            font-weight: 600;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
-    .input-line {
-      width: 100%;
-      border: 2px solid #e8ecf5;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
-    }
+        .table thead th:first-child {
+            border-top-left-radius: 10px;
+        }
 
+        .table thead th:last-child {
+            border-top-right-radius: 10px;
+        }
 
-    .input-line:focus {
-      outline: none;
-      border-color: #1e6b3e;
-      box-shadow: 0 0 0 3px rgba(30, 107, 62, 0.1);
-    }
+        .table td {
+            min-height: 60px;
+            border: 2px solid #e8ecf5;
+            padding: 8px;
+            vertical-align: middle;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: white;
+        }
 
-    .input-line::placeholder {
-      color: #a0aec0;
-    }
+        .table td:first-child {
+            background: #f8f9fd;
+            font-weight: 600;
+            color: #1e6b3e;
+            font-size: 0.85rem;
+        }
 
-    .badge-info {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
-      color: white;
-      padding: 3px 8px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 600;
-    }
+        .disciplines-card h4 {
+            color: #1e6b3e;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: inline-block;
+            margin-right: 10px;
+        }
 
-    @media (max-width: 768px) {
-      body {
-        zoom: 58%;
-      }
+        .search-container {
+            display: inline-block;
+            width: calc(100% - 150px);
+            vertical-align: middle;
+        }
 
-      .col-md-4,
-      .col-md-8 {
-        width: 90%;
-        margin-top: 20px;
-      }
-    }
-  </style>
+        .search-input {
+            width: 100%;
+            border: 2px solid #e8ecf5;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1e6b3e;
+            box-shadow: 0 0 0 3px rgba(30, 107, 62, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .scrollable-list {
+            max-height: 700px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .scrollable-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #1e6b3e 0%, #0d5028 100%);
+            border-radius: 10px;
+        }
+
+        .disciplines {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 5px;
+        }
+
+        .list-group-item {
+            width: 100%;
+            border: 2px solid #e8ecf5;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-weight: 500;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8f9fd 0%, #ffffff 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            cursor: grab;
+        }
+
+        .list-group-item:hover {
+            transform: translateX(5px);
+            border-color: #1e6b3e;
+            box-shadow: 0 4px 12px rgba(30, 107, 62, 0.2);
+        }
+
+        .list-group-item:active {
+            cursor: grabbing;
+        }
+
+        /* Cor da Matéria Concluída na Listagem */
+        .list-group-item.completed-list {
+            background: #28a745;
+            border-color: #1e7e34;
+            color: white;
+            font-weight: 600;
+        }
+
+        .list-group-item.completed-list .check-btn {
+            border-color: white;
+            color: #28a745;
+            background: white;
+        }
+
+        .check-btn {
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            z-index: 5;
+        }
+
+        .check-btn.checked {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .droppable {
+            position: relative;
+            border-radius: 8px;
+        }
+
+        .droppable:hover {
+            background: linear-gradient(135deg, #fef3e2 0%, #ffe8cc 100%);
+            cursor: pointer;
+            transform: scale(1.02);
+            border-color: #ffa500;
+        }
+
+        .droppable:not(:empty) {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #1e6b3e;
+            font-weight: 600;
+            color: #155724;
+            box-shadow: 0 2px 8px rgba(30, 107, 62, 0.2);
+        }
+
+        .hover:hover {
+            cursor: pointer;
+        }
+
+        .input-line {
+            width: 100%;
+            border: 2px solid #e8ecf5;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-line:focus {
+            outline: none;
+            border-color: #1e6b3e;
+            box-shadow: 0 0 0 3px rgba(30, 107, 62, 0.1);
+        }
+
+        .input-line::placeholder {
+            color: #a0aec0;
+        }
+
+        /* Modal Customizado Centralizado */
+        .custom-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .custom-modal-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            text-align: center;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* --- RESPONSIVIDADE ORIGINAL + GRID 3x3 --- */
+        @media (max-width: 768px) {
+            body {
+                zoom: 58%;
+            }
+
+            .col-md-9,
+            .col-md-3 {
+                width: 90%;
+                margin: 20px auto;
+                max-width: 100%;
+                flex: 0 0 100%;
+            }
+
+            .sem-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .subject-card {
+                font-size: 0.75rem;
+                padding: 10px 5px;
+                min-height: 70px;
+            }
+
+            .card-badges {
+                padding: 0 2px;
+            }
+
+            .badge-sem,
+            .badge-reqs {
+                font-size: 0.55rem;
+                padding: 2px 5px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-9">
-        <div class="table-card">
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Horários</th>
-                  <th>Seg</th>
-                  <th>Ter</th>
-                  <th>Qua</th>
-                  <th>Qui</th>
-                  <th>Sex</th>
-                  <th>Sab</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
+    <div id="reqModal" class="custom-modal-overlay" onclick="closeModal(event)">
+        <div class="custom-modal-box" onclick="event.stopPropagation()">
+            <h4 style="color: #1e6b3e; font-weight: 800; border-bottom: 2px solid #e8ecf5; padding-bottom: 10px;">⚠️
+                Requisitos Pendentes</h4>
+            <p id="modalSubjName" style="font-size: 1rem; color: #2d3748; margin-top: 15px; font-weight: 500;">Para
+                cursar esta matéria, você precisa de:</p>
+            <ul id="modalReqList"
+                style="margin: 15px 0; padding: 0; font-weight: 700; color: #dc3545; line-height: 1.8; list-style: none; text-align: center;">
+            </ul>
+            <button onclick="closeModal(event, true)" class="btn btn-success w-100 mt-3"
+                style="font-weight: bold; border-radius: 8px; padding: 12px;">Entendido</button>
         </div>
-      </div>
-      <div class="col-md-3">
-        <div class="disciplines-card">
-          <h4>📖 Disciplinas</h4>
-          <div class="search-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar">
-          </div>
-          <div class="scrollable-list">
-            <ul class="list-group" id="listGroup"></ul>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script>
-    // Discipline names array
-    const disciplineNames = [
-      "Álgebra Linear",
-      "Álgebra Vet. e Geometria Analítica",
-      "Análise e Projeto de Algoritmos",
-      "Arquitetura de Computadores",
-      "Avaliação da Aprendizagem",
-      "Banco de Dados I",
-      "Banco de Dados II",
-      "Cálculo I",
-      "Cálculo II",
-      "Ciência, Tecnologia e Sociedade",
-      "Circuitos Digitais",
-      "Compiladores",
-      "Didática",
-      "Direito Aplicado a Informática",
-      "Educação a Distância",
-      "Educação Inclusiva",
-      "Empreendedorismo",
-      "Engenharia de Software",
-      "Estágio Sup. I",
-      "Estágio Sup. II",
-      "Estágio Sup. III",
-      "Estágio Sup. IV",
-      "Estruturas de Dados",
-      "Filosofia da Educação",
-      "Game e Educação",
-      "Gestão de Projetos",
-      "Grafos",
-      "História da Educação",
-      "Informática na Educação",
-      "Inglês Técnico I",
-      "Inteligência Artificial",
-      "Interface Humano Computador",
-      "Introdução à Computação",
-      "Introdução à Matemática",
-      "Laboratório de Programação I",
-      "Laboratório de Programação II",
-      "Laboratório de Programação III",
-      "Leitura e Produção Textual",
-      "Linguagens Formais e Autômatos",
-      "Lógica e Linguagem de Programação",
-      "Met. e Prática de Ensino em Computação I",
-      "Met. e Prática de Ensino em Computação II",
-      "Metodologia da Pesquisa",
-      "Optativa I",
-      "Optativa II",
-      "Organização de Arquivos e Dados",
-      "Política e Gestão da Educação",
-      "Probabilidade e Estatística",
-      "Programação Orientada a Objeto",
-      "Projeto Integrador I",
-      "Projeto Integrador II",
-      "Psicologia da Educação",
-      "Redes",
-      "Robótica Educacional",
-      "Segurança da Informação",
-      "Sistemas Distribuidos",
-      "Sistemas Operacionais",
-      "Sociologia da Educação",
-      "Software Educacional",
-      "Softwares de Gestão Educacional",
-      "TCC",
-      "Teoria da Computação",
-      "Tópicos Avançados em Programação",
-      "Web Design"
-    ];
+    <div class="container-fluid">
+        <div class="top-nav">
+            <div class="nav-tabs-custom">
+                <button class="nav-btn active" onclick="switchView('grade')">📍 Progresso Curricular</button>
+                <button class="nav-btn" onclick="switchView('horarios')">📅 Organizador de Horários</button>
+            </div>
 
-    // Generate list items for each discipline
-    const listGroup = document.getElementById("listGroup");
-    disciplineNames.forEach((discipline) => {
-      const listItemContainer = document.createElement("div");
-      listItemContainer.classList.add("disciplines");
+            <div class="switch-wrapper">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="modoLivreSwitch"
+                        onchange="salvarModoLivre()">
+                    <label class="custom-control-label" for="modoLivreSwitch" style="cursor:pointer; margin-top: 2px;">
+                        Modo Livre (Ignorar Travas)
+                    </label>
+                </div>
+            </div>
 
-      const listItem = document.createElement("li");
-      listItem.classList.add("list-group-item", "hover");
-      listItem.textContent = discipline;
-      listItem.draggable = true;
+            <div class="global-stats-indicator">
+                <span style="color: #28a745;"><span id="stat-comp">0</span> Feitas</span>
+                <span style="color: #2d3748;"><span id="stat-disp">0</span> Disponíveis</span>
+                <span style="color: #856404;"><span id="stat-bloq">0</span> Bloqueadas</span>
+            </div>
+        </div>
 
-      const inputElement = document.createElement("input");
-      inputElement.type = "text";
-      inputElement.classList.add("input-line");
-      inputElement.placeholder = "Anotar dias e horários da aula";
+        <div id="view-grade" class="view-section active">
+            <div class="grid-wrapper" id="grid-container">
+            </div>
+        </div>
 
-      // Removido o onblur para usar addEventListener posteriormente
-      // inputElement.onblur = salvarDadosInputInicioAula;
+        <div id="view-horarios" class="view-section">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="table-card">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Horários</th>
+                                        <th>Seg</th>
+                                        <th>Ter</th>
+                                        <th>Qua</th>
+                                        <th>Qui</th>
+                                        <th>Sex</th>
+                                        <th>Sab</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="disciplines-card">
+                        <h4>📖 Disciplinas</h4>
+                        <div class="search-container">
+                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar">
+                        </div>
+                        <div class="scrollable-list">
+                            <ul class="list-group" id="listGroup">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-      listItemContainer.appendChild(listItem);
-      listItemContainer.appendChild(inputElement);
-      listGroup.appendChild(listItemContainer);
-    });
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // MATRIZ ATUALIZADA - Lógica refatorada conforme instruções
+        const subjects = [
+            { id: 's1_1', name: 'Introdução à Computação', sem: 1, req: [] },
+            { id: 's1_2', name: 'Lógica e Linguagem de Programação', sem: 1, req: [] },
+            { id: 's1_3', name: 'Leitura e Produção Textual', sem: 1, req: [] },
+            { id: 's1_4', name: 'Informática na Educação', sem: 1, req: [] },
+            { id: 's1_5', name: 'Introdução à Matemática', sem: 1, req: [] },
+            { id: 's1_6', name: 'Ciência, Tecnologia e Sociedade', sem: 1, req: [] },
 
-    // Time slots array
-    const time = [
-      "07:00 - 07:50",
-      "07:50 - 08:40",
-      "08:55 - 09:45",
-      "09:45 - 10:35",
-      "10:35 - 11:25",
-      "11:25 - 12:15",
-      "13:15 - 14:05",
-      "14:05 - 14:55",
-      "15:10 - 16:00",
-      "16:00 - 16:50",
-      "16:50 - 17:40",
-      "17:40 - 18:30",
-      "18:40 - 19:30",
-      "19:30 - 20:20",
-      "20:20 - 21:10",
-      "21:10 - 22:00",
-    ];
+            { id: 's2_1', name: 'Circuitos Digitais', sem: 2, req: [] },
+            { id: 's2_2', name: 'Estruturas de Dados', sem: 2, req: ['s1_2'] },
+            { id: 's2_3', name: 'Inglês Técnico I', sem: 2, req: [] },
+            { id: 's2_4', name: 'História da Educação', sem: 2, req: [] },
+            { id: 's2_5', name: 'Cálculo I', sem: 2, req: ['s1_5'] },
+            { id: 's2_6', name: 'Álgebra Vet. e Geometria Analítica', sem: 2, req: ['s1_5'] },
 
-    // Generate time slots and table cells
-    const tbody = document.querySelector("tbody");
-    time.forEach((timeSlot) => {
-      const row = document.createElement("tr");
-      const timeCell = document.createElement("td");
-      timeCell.textContent = timeSlot;
-      row.appendChild(timeCell);
+            { id: 's3_1', name: 'Organização de Arquivos e Dados', sem: 3, req: [] }, // S/ Pré-req
+            { id: 's3_2', name: 'Programação Orientada a Objeto', sem: 3, req: ['s2_2'] },
+            { id: 's3_3', name: 'Análise e Projeto de Algoritmos', sem: 3, req: ['s2_2'] },
+            { id: 's3_4', name: 'Informática na Educação', sem: 3, req: [] }, // Inserida devolta com nome original
+            { id: 's3_5', name: 'Cálculo II', sem: 3, req: ['s2_5'] },
+            { id: 's3_6', name: 'Álgebra Linear', sem: 3, req: ['s2_6'] },
 
-      for (let i = 0; i < 6; i++) {
-        const cell = document.createElement("td");
-        cell.classList.add("droppable");
-        row.appendChild(cell);
-      }
+            { id: 's4_1', name: 'Arquitetura de Computadores', sem: 4, req: ['s2_1'] }, // Pré-req arrumado
+            { id: 's4_2', name: 'Laboratório de Programação I', sem: 4, req: ['s3_2'] },
+            { id: 's4_3', name: 'Linguagens Formais e Autômatos', sem: 4, req: [] },
+            { id: 's4_4', name: 'Banco de Dados I', sem: 4, req: [] },
+            { id: 's4_5', name: 'Probabilidade e Estatística', sem: 4, req: [] },
+            { id: 's4_6', name: 'Projeto Integrador I', sem: 4, req: [] },
 
-      tbody.appendChild(row);
-    });
+            { id: 's5_1', name: 'Sistemas Operacionais', sem: 5, req: ['s4_1'] },
+            { id: 's5_2', name: 'Laboratório de Programação II', sem: 5, req: ['s4_2'] },
+            { id: 's5_3', name: 'Teoria da Computação', sem: 5, req: ['s4_3'] },
+            { id: 's5_4', name: 'Banco de Dados II', sem: 5, req: ['s4_4'] },
+            { id: 's5_5', name: 'Engenharia de Software', sem: 5, req: [] },
+            { id: 's5_6', name: 'Metodologia da Pesquisa', sem: 5, req: [] },
 
-    // Função para permitir a ação de soltar na célula
-    function allowDrop(event) {
-      event.preventDefault();
-    }
+            { id: 's6_1', name: 'Grafos', sem: 6, req: ['s2_2'] },
+            { id: 's6_2', name: 'Laboratório de Programação III', sem: 6, req: ['s5_2'] },
+            { id: 's6_3', name: 'Interface Humano Computador', sem: 6, req: [] },
+            { id: 's6_4', name: 'Web Design', sem: 6, req: [] }, // S/ Pré-req
+            { id: 's6_5', name: 'Redes', sem: 6, req: [] }, // S/ Pré-req
+            { id: 's6_6', name: 'Empreendedorismo', sem: 6, req: ['s5_6'] },
 
-    // --- FUNÇÕES CORRIGIDAS ---
+            { id: 's7_1', name: 'Inteligência Artificial', sem: 7, req: ['s2_2'] },
+            { id: 's7_2', name: 'Optativa I', sem: 7, req: [] },
+            { id: 's7_3', name: 'Direito Aplicado a Informática', sem: 7, req: [] },
+            { id: 's7_4', name: 'Gestão de Projetos', sem: 7, req: [] },
+            { id: 's7_5', name: 'Sistemas Distribuidos', sem: 7, req: ['s6_5'] },
+            { id: 's7_6', name: 'Projeto Integrador II', sem: 7, req: [] },
 
-    function salvarDadosTabela() {
-      const table = document.querySelector('.table tbody'); // Salva apenas o corpo da tabela
-      const tableData = table.innerHTML;
-      localStorage.setItem('tabelaDados_v2', tableData);
-    }
+            { id: 's8_1', name: 'Compiladores', sem: 8, req: ['s2_2'] },
+            { id: 's8_2', name: 'Estágio Sup. I', sem: 8, req: [] },
+            { id: 's8_3', name: 'Tópicos Avançados em Programação', sem: 8, req: [] },
+            { id: 's8_4', name: 'TCC', sem: 8, req: ['s5_6'] },
+            { id: 's8_5', name: 'Segurança da Informação', sem: 8, req: ['s7_5'] },
+            { id: 's8_6', name: 'Optativa II', sem: 8, req: [] }
+        ];
 
-    function salvarDadosInputInicioAula() {
-      const inputs = document.querySelectorAll('.input-line');
-      const dadosInputs = {};
-      inputs.forEach((input) => {
-        const id = input.parentNode.querySelector('.list-group-item').textContent; // Usa textContent
-        dadosInputs[id] = input.value;
-      });
-      localStorage.setItem('dadosInputs_v2', JSON.stringify(dadosInputs));
-    }
+        let completed = new Set(JSON.parse(localStorage.getItem('sys_completed_final')) || []);
 
-    function carregarDadosInput() {
-      const dadosSalvos = localStorage.getItem('dadosInputs_v2');
-      if (dadosSalvos) {
-        const dadosInputs = JSON.parse(dadosSalvos);
-        const inputs = document.querySelectorAll('.input-line');
-        inputs.forEach((input) => {
-          const id = input.parentNode.querySelector('.list-group-item').textContent;
-          if (dadosInputs[id]) {
-            input.value = dadosInputs[id];
-          }
-        });
-      }
-      // Adiciona o listener DEPOIS de carregar, para não salvar em branco na inicialização
-      const inputs = document.querySelectorAll('.input-line');
-      inputs.forEach(input => {
-        input.addEventListener('blur', salvarDadosInputInicioAula);
-      });
-    }
-
-    function carregarDadosTabela() {
-      const tableBody = document.querySelector('.table tbody');
-      const tableData = localStorage.getItem('tabelaDados_v2');
-      if (tableData) {
-        tableBody.innerHTML = tableData;
-      }
-      // Reatribui os eventos para as células carregadas
-      const cells = document.querySelectorAll('.droppable');
-      cells.forEach(cell => {
-        cell.addEventListener('dragover', allowDrop);
-        cell.addEventListener('drop', handleDrop);
-        cell.addEventListener('click', handleRemove);
-      });
-    }
-
-    // --- FIM DAS FUNÇÕES CORRIGIDAS ---
-
-    // Function to handle drag and drop events
-    function handleDragStart(e) {
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', e.target.textContent); // Usa textContent
-    }
-
-    function handleDrop(e) {
-      if (e.stopPropagation) {
-        e.stopPropagation();
-      }
-      const data = e.dataTransfer.getData('text/plain');
-      e.target.innerHTML = data; // Mantem innerHTML para poder limpar depois
-      e.target.classList.remove('dropped');
-      salvarDadosTabela();
-      return false;
-    }
-
-    function handleRemove(e) {
-      if (e.target.classList.contains('droppable') && e.target.innerHTML !== '') {
-        e.target.innerHTML = '';
-        e.target.classList.add('dropped');
-        salvarDadosTabela();
-      }
-    }
-
-    // Roda as funções de carregamento quando o DOM estiver pronto
-    document.addEventListener('DOMContentLoaded', () => {
-      carregarDadosTabela();
-      carregarDadosInput();
-
-      // Add event listeners for drag and drop
-      const droppables = document.querySelectorAll('.droppable');
-      droppables.forEach((droppable) => {
-        droppable.addEventListener('dragover', allowDrop);
-        droppable.addEventListener('drop', handleDrop);
-        droppable.addEventListener('click', handleRemove);
-      });
-
-      const listItems = document.querySelectorAll('.list-group-item');
-      listItems.forEach((item) => {
-        item.addEventListener('dragstart', handleDragStart);
-      });
-    });
-
-
-    // Search functionality
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', function () {
-      const searchTerm = this.value.toLowerCase();
-      const disciplineContainers = document.querySelectorAll('.disciplines');
-
-      disciplineContainers.forEach((container) => {
-        const disciplineName = container.querySelector('.list-group-item').textContent.toLowerCase();
-        if (disciplineName.includes(searchTerm)) {
-          container.style.display = 'flex';
-        } else {
-          container.style.display = 'none';
+        function getDepth(id) {
+            const subj = subjects.find(s => s.id === id);
+            if (!subj.req || subj.req.length === 0) return 1;
+            let maxReqDepth = 0;
+            subj.req.forEach(rId => { maxReqDepth = Math.max(maxReqDepth, getDepth(rId)); });
+            return maxReqDepth + 1;
         }
-      });
-    });
 
-  </script>
+        function switchView(view) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${view}`).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function salvarModoLivre() {
+            localStorage.setItem('sys_modoLivre_final', document.getElementById('modoLivreSwitch').checked);
+        }
+
+        function isAvailable(subj) {
+            return subj.req.every(reqId => completed.has(reqId));
+        }
+
+        function toggleSubject(id, e) {
+            if (e) e.stopPropagation();
+
+            const subj = subjects.find(s => s.id === id);
+            const modoLivre = document.getElementById('modoLivreSwitch').checked;
+
+            if (completed.has(id)) {
+                const toRemove = new Set([id]);
+                let changed = true;
+                while (changed) {
+                    changed = false;
+                    subjects.forEach(s => {
+                        if (completed.has(s.id) && !toRemove.has(s.id) && s.req.some(r => toRemove.has(r))) {
+                            toRemove.add(s.id); changed = true;
+                        }
+                    });
+                }
+                toRemove.forEach(r => completed.delete(r));
+            } else {
+                if (isAvailable(subj) || modoLivre) {
+                    completed.add(id);
+                } else {
+                    openReqModal(null, id);
+                    return;
+                }
+            }
+            localStorage.setItem('sys_completed_final', JSON.stringify([...completed]));
+            updateUI();
+        }
+
+        function openReqModal(e, id) {
+            if (e) e.stopPropagation();
+            const subj = subjects.find(s => s.id === id);
+            const reqNames = subj.req.map(rId => subjects.find(s => s.id === rId).name);
+
+            document.getElementById('modalSubjName').innerText = `Matéria: ${subj.name}`;
+            document.getElementById('modalReqList').innerHTML = reqNames.map(name => `<li>- ${name}</li>`).join('');
+            document.getElementById('reqModal').style.display = 'flex';
+        }
+
+        function closeModal(e, force = false) {
+            if (force || e.target.id === 'reqModal') {
+                document.getElementById('reqModal').style.display = 'none';
+            }
+        }
+
+        // --- RENDER 1: GRADE CASCATA ---
+        function initGrade() {
+            const container = document.getElementById('grid-container');
+            for (let i = 1; i <= 8; i++) {
+                const row = document.createElement('div');
+                row.className = 'sem-row';
+                row.innerHTML = `<div class="sem-title">${i}º Semestre</div>`;
+
+                const grid = document.createElement('div');
+                grid.className = 'sem-grid';
+
+                subjects.filter(s => s.sem === i).forEach(subj => {
+                    const card = document.createElement('div');
+                    card.id = `card-${subj.id}`;
+                    card.className = `subject-card`;
+                    card.onclick = () => toggleSubject(subj.id);
+
+                    let reqHtml = subj.req.length > 0
+                        ? `<div class="badge-reqs" onclick="openReqModal(event, '${subj.id}')" title="Ver requisitos">${subj.req.length} req.</div>`
+                        : `<div></div>`;
+
+                    card.innerHTML = `
+                    <div class="card-badges">
+                      <div class="badge-sem">${getDepth(subj.id)} sem.</div>
+                      ${reqHtml}
+                    </div>
+                    <span style="line-height: 1.2;">${subj.name}</span>
+                `;
+                    grid.appendChild(card);
+                });
+                row.appendChild(grid);
+                container.appendChild(row);
+            }
+        }
+
+        // --- RENDER 2: ORGANIZADOR (CÓDIGO ORIGINAL LEGADO REFEITO) ---
+        function initOrganizador() {
+            const time = [
+                "07:00 - 07:50", "07:50 - 08:40", "08:55 - 09:45", "09:45 - 10:35", "10:35 - 11:25", "11:25 - 12:15",
+                "13:15 - 14:05", "14:05 - 14:55", "15:10 - 16:00", "16:00 - 16:50", "16:50 - 17:40", "17:40 - 18:30",
+                "18:40 - 19:30", "19:30 - 20:20", "20:20 - 21:10", "21:10 - 22:00"
+            ];
+
+            const tbody = document.querySelector("tbody");
+            time.forEach((timeSlot) => {
+                const row = document.createElement("tr");
+                const timeCell = document.createElement("td");
+                timeCell.textContent = timeSlot;
+                row.appendChild(timeCell);
+                for (let i = 0; i < 6; i++) {
+                    const cell = document.createElement("td");
+                    cell.classList.add("droppable");
+                    row.appendChild(cell);
+                }
+                tbody.appendChild(row);
+            });
+
+            const listGroup = document.getElementById("listGroup");
+            subjects.forEach((subj) => {
+                const listItemContainer = document.createElement("div");
+                listItemContainer.classList.add("disciplines");
+
+                const listItem = document.createElement("li");
+                listItem.classList.add("list-group-item", "hover");
+                listItem.draggable = true;
+                listItem.id = `list-${subj.id}`;
+
+                listItem.innerHTML = `
+              <span class="subj-name-drag">${subj.name}</span>
+              <div class="check-btn" onclick="toggleSubject('${subj.id}', event)" title="Marcar como concluída">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+            `;
+
+                const inputElement = document.createElement("input");
+                inputElement.type = "text";
+                inputElement.classList.add("input-line");
+                inputElement.placeholder = "Anotar dias e horários da aula";
+
+                listItemContainer.appendChild(listItem);
+                listItemContainer.appendChild(inputElement);
+                listGroup.appendChild(listItemContainer);
+            });
+
+            // Search original
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase();
+                const disciplineContainers = document.querySelectorAll('.disciplines');
+                disciplineContainers.forEach((container) => {
+                    const disciplineName = container.querySelector('.subj-name-drag').textContent.toLowerCase();
+                    if (disciplineName.includes(searchTerm)) {
+                        container.style.display = 'flex';
+                    } else {
+                        container.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // --- FUNÇÕES EXATAS DO SEU CÓDIGO DE ARRASTO E CACHE ---
+        function salvarDadosTabela() {
+            const table = document.querySelector('.table tbody');
+            const tableData = table.innerHTML;
+            localStorage.setItem('tabelaDados_v2', tableData); // Chave Original mantida!
+        }
+
+        function salvarDadosInputInicioAula() {
+            const inputs = document.querySelectorAll('.input-line');
+            const dadosInputs = {};
+            inputs.forEach((input) => {
+                const name = input.parentNode.querySelector('.subj-name-drag').textContent;
+                dadosInputs[name] = input.value;
+            });
+            localStorage.setItem('dadosInputs_v2', JSON.stringify(dadosInputs)); // Chave Original mantida!
+        }
+
+        function carregarDadosInput() {
+            const dadosSalvos = localStorage.getItem('dadosInputs_v2');
+            if (dadosSalvos) {
+                const dadosInputs = JSON.parse(dadosSalvos);
+                const inputs = document.querySelectorAll('.input-line');
+                inputs.forEach((input) => {
+                    const name = input.parentNode.querySelector('.subj-name-drag').textContent;
+                    if (dadosInputs[name]) {
+                        input.value = dadosInputs[name];
+                    }
+                });
+            }
+            const inputs = document.querySelectorAll('.input-line');
+            inputs.forEach(input => {
+                input.addEventListener('blur', salvarDadosInputInicioAula);
+            });
+        }
+
+        function carregarDadosTabela() {
+            const tableBody = document.querySelector('.table tbody');
+            const tableData = localStorage.getItem('tabelaDados_v2');
+            if (tableData) {
+                tableBody.innerHTML = tableData;
+            }
+            const cells = document.querySelectorAll('.droppable');
+            cells.forEach(cell => {
+                cell.addEventListener('dragover', allowDrop);
+                cell.addEventListener('drop', handleDrop);
+                cell.addEventListener('click', handleRemove);
+            });
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function handleDragStart(e) {
+            const subjName = e.target.querySelector('.subj-name-drag').textContent;
+            const subj = subjects.find(s => s.name === subjName);
+            const modoLivre = document.getElementById('modoLivreSwitch').checked;
+
+            if (!isAvailable(subj) && !completed.has(subj.id) && !modoLivre) {
+                e.preventDefault();
+                openReqModal(null, subj.id);
+                return false;
+            }
+
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', subjName); // Passando texto puro como no original
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) e.stopPropagation();
+            const data = e.dataTransfer.getData('text/plain');
+            e.target.innerHTML = data; // InnerHTML puro como no original
+            e.target.classList.remove('dropped');
+            salvarDadosTabela();
+            return false;
+        }
+
+        function handleRemove(e) {
+            if (e.target.classList.contains('droppable') && e.target.innerHTML !== '') {
+                e.target.innerHTML = '';
+                e.target.classList.add('dropped');
+                salvarDadosTabela();
+            }
+        }
+
+        // --- ATUALIZAÇÕES VISUAIS DA TELA ---
+        function updateUI() {
+            let stats = { comp: 0, disp: 0, bloq: 0 };
+
+            subjects.forEach(subj => {
+                const card = document.getElementById(`card-${subj.id}`);
+                const listItem = document.getElementById(`list-${subj.id}`);
+                const checkBtn = listItem ? listItem.querySelector('.check-btn') : null;
+
+                if (completed.has(subj.id)) {
+                    stats.comp++;
+                    if (card) card.className = "subject-card completed";
+                    if (listItem) {
+                        listItem.classList.add('completed-list');
+                        checkBtn.classList.add('checked');
+                    }
+                } else if (isAvailable(subj)) {
+                    stats.disp++;
+                    if (card) card.className = "subject-card available";
+                    if (listItem) {
+                        listItem.classList.remove('completed-list');
+                        checkBtn.classList.remove('checked');
+                    }
+                } else {
+                    stats.bloq++;
+                    if (card) card.className = "subject-card locked";
+                    if (listItem) {
+                        listItem.classList.remove('completed-list');
+                        checkBtn.classList.remove('checked');
+                    }
+                }
+            });
+
+            document.getElementById('stat-comp').innerText = stats.comp;
+            document.getElementById('stat-disp').innerText = stats.disp;
+            document.getElementById('stat-bloq').innerText = stats.bloq;
+        }
+
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initGrade();
+            initOrganizador();
+
+            // Funções legadas de cache e evento
+            carregarDadosTabela();
+            carregarDadosInput();
+
+            const listItems = document.querySelectorAll('.list-group-item');
+            listItems.forEach((item) => {
+                item.addEventListener('dragstart', handleDragStart);
+            });
+
+            document.getElementById('modoLivreSwitch').checked = (localStorage.getItem('sys_modoLivre_final') === 'true');
+            updateUI();
+        });
+    </script>
 </body>
 
 </html>
